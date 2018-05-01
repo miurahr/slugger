@@ -9,11 +9,7 @@ help.
 import bz2
 import os
 import sys
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
-
+from six.moves import cPickle
 import click
 import logbook
 import logbook.more
@@ -46,7 +42,7 @@ def _parse_translit(fn):
 
         try:
             p.parse()
-        except LException, e:
+        except LException as e:
             log.critical("%s:%d.%d %s" % (
                 fn,
                 e.src.lineno,
@@ -111,6 +107,6 @@ def _main(loglevel, preprocess_only, output_dir, files, compress):
                     outfile = open(out_fn, 'w') if not compress else\
                         bz2.BZ2File(out_fn, 'w', 1024**2, 9)
                     try:
-                        pickle.dump(ttbl, outfile, pickle.HIGHEST_PROTOCOL)
+                        cPickle.dump(ttbl, outfile, cPickle.HIGHEST_PROTOCOL)
                     finally:
                         outfile.close()

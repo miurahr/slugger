@@ -1,4 +1,5 @@
 import re
+import six
 
 PREFACE_RE = re.compile(
     '^(\s*(?:escape_char|comment_char)\s*.\s*\n)*'
@@ -11,7 +12,7 @@ def strip_comments(comment_char, escape_char, string_delim, i):
 
     # remove comments
     while True:
-        c = i.next()
+        c = six.next(i)
 
         if escaped:
             escaped = False
@@ -24,7 +25,7 @@ def strip_comments(comment_char, escape_char, string_delim, i):
             inside_string = not inside_string
         elif comment_char == c and not inside_string:
             while c != '\n':
-                c = i.next()
+                c = six.next(i)
 
         yield c
 
@@ -76,7 +77,7 @@ class Screener(object):
             else:
                 self.colno += 1
 
-            c = self.i.next()
+            c = six.next(self.i)
             if '\n' == c:
                 self._newline = True
             return c

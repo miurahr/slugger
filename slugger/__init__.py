@@ -9,14 +9,10 @@ from remember.memoize import memoize
 import pkg_resources
 import unihandecode
 
-from exc import LanguageNotFoundError
-import languages
-import languages.default_language
-
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+from .exc import LanguageNotFoundError
+import slugger.languages
+import slugger.languages.default_language
+from six.moves import cPickle
 
 
 _MEMOIZE = 20
@@ -96,7 +92,7 @@ def _load_ttbl(lang):
             if c.endswith('.bz2'):
                 buf = bz2.decompress(buf)
 
-            return pickle.loads(buf)
+            return cPickle.loads(buf)
 
     raise LanguageNotFoundError('Could not find translation table for %s' %
                                 lang)
