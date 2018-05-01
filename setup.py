@@ -19,7 +19,7 @@ class locale_sdist(sdist):
         return sdist.run(self)
 
 
-devtools_req = ['click', 'remember', 'logbook', 'unihandecode>=0.50']
+devtools_req = ['click', 'repoze.lru', 'six', 'logbook', 'unihandecode>=0.81']
 setup(name='slugger',
       version='0.2.3.dev1',
       description=('Slugging done right. Tries to support close to 300 '
@@ -30,7 +30,7 @@ setup(name='slugger',
       author_email='git@marcbrinkmann.de',
       url='http://github.com/mbr/slugger',
       license='LGPLv2.1',
-      install_requires=['remember', 'unihandecode>=0.50'],
+      install_requires=['repoze.lru', 'six', 'unihandecode>=0.81'],
       package_data={
           'slugger': ['localedata/*'],
       },
@@ -46,7 +46,7 @@ setup(name='slugger',
       },
       classifiers=[
           'Programming Language :: Python :: 2',
-          #'Programming Language :: Python :: 3',  # no python 3 support yet
+          'Programming Language :: Python :: 3',
       ],
       cmdclass={'sdist': locale_sdist},
       zip_safe=False,

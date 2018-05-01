@@ -13,7 +13,7 @@ from six.moves import cPickle
 import click
 import logbook
 import logbook.more
-from remember.memoize import memoize
+from repoze.lru import lru_cache
 
 from .tokenize import Tokenizer
 from .preprocess import Screener
@@ -27,7 +27,7 @@ def parse_translit(fn):
     return _parse_translit(os.path.normpath(os.path.abspath(fn)))
 
 
-@memoize(100)
+@lru_cache(maxsize=100)
 def _parse_translit(fn):
     with open(fn) as f:
         log.info("parse %s" % os.path.relpath(fn))
