@@ -51,7 +51,8 @@ def preprocess(buf):
                 comment_char = ch
 
         # start reading after preface
-        i = iter(buffer(buf, preface_m.end()))
+        buf2 = buf[preface_m.end():]
+        i = iter(buf2)
     else:
         i = iter(buf)
 
