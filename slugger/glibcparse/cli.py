@@ -9,6 +9,7 @@ help.
 import bz2
 import os
 import sys
+from six import PY2
 from six.moves import cPickle
 import click
 import logbook
@@ -27,32 +28,38 @@ def parse_translit(fn):
     return _parse_translit(os.path.normpath(os.path.abspath(fn)))
 
 
+def _parse_translit_file(tok, fn):
+    log.info("parse %s" % os.path.relpath(fn))
+    dirname = os.path.dirname(fn)
+
+    def parse_func(new_fn):
+        full_fn = os.path.join(dirname, new_fn)
+        return parse_translit(full_fn)[0]
+
+    p = TranslitParser(parse_func, tok)
+
+    try:
+        p.parse()
+    except LException as e:
+        log.critical("%s:%d.%d %s" % (
+            fn,
+            e.src.lineno,
+            e.src.colno,
+            e.err
+        ))
+        sys.exit(1)
+
+    return p.ttbl, p
+
 @lru_cache(maxsize=100)
 def _parse_translit(fn):
-    with open(fn) as f:
-        log.info("parse %s" % os.path.relpath(fn))
-        tok = Tokenizer(Screener(f.read()))
-        dirname = os.path.dirname(fn)
-
-        def parse_func(new_fn):
-            full_fn = os.path.join(dirname, new_fn)
-            return parse_translit(full_fn)[0]
-
-        p = TranslitParser(parse_func, tok)
-
-        try:
-            p.parse()
-        except LException as e:
-            log.critical("%s:%d.%d %s" % (
-                fn,
-                e.src.lineno,
-                e.src.colno,
-                e.err
-            ))
-            sys.exit(1)
-
-        return p.ttbl, p
-
+    if PY2:
+        with open(fn) as f:
+            tok = Tokenizer(Screener(f.read()))
+    else:
+        with open(fn, encoding="iso-8859-1") as f:
+            tok = Tokenizer(Screener(f.read()))
+    return _parse_translit_file(tok, fn)
 
 @click.command(
     help=('Parses the provided files, calculates translation tables and '
